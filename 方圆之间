@@ -1,0 +1,65 @@
+int shapeSize = 200; // 初始图形大小
+float rotationAngle = 0; // 初始旋转角度
+boolean mouseClicked = false; 
+boolean paused = false; 
+int minShapeSize = 2; // 图形的最小尺寸
+
+void setup() {
+  size(400, 400);
+  background(220); 
+  noFill();
+  rectMode(CENTER);
+  ellipseMode(CENTER);
+  frameRate(30);
+}
+
+void draw() {
+  if (mouseClicked && !paused) {
+    if (frameCount % 2 == 0 && shapeSize > minShapeSize) {
+      if (shapeSize <= minShapeSize) {
+        mouseClicked = false; 
+      }
+      if (frameCount % 4 == 0) {
+        drawSquare();
+      } else {
+        drawCircle();
+      }
+    }
+  }
+}
+
+void mouseClicked() {
+  mouseClicked = true; 
+  background(220); 
+  shapeSize = 200;
+}
+
+void keyPressed() {
+  if (key == ' ') {
+    paused = !paused; // 切换暂停状态
+  }
+}
+
+void drawSquare() {
+  pushMatrix();
+  translate(width / 2, height / 2);
+  rotate(rotationAngle);
+  rect(0, 0, shapeSize, shapeSize);
+  popMatrix();
+  
+  // 调整角度
+  rotationAngle += radians(10); 
+  
+  // 调整图形大小
+  shapeSize -= 2;
+}
+
+void drawCircle() {
+  pushMatrix();
+  translate(width / 2, height / 2);
+  ellipse(0, 0, shapeSize, shapeSize);
+  popMatrix();
+  
+  // 调整图形大小
+  shapeSize -= 2;
+}
