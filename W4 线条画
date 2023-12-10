@@ -1,0 +1,71 @@
+PImage img;
+float p = 1.05;
+float r = 15;
+float speed = 8;
+
+float majorAxis = 5; // 初始长轴长度
+float eccentricity = 0.98; // 初始离心率，范围在0到1之间
+float minorAxis; // 根据离心率计算得到的初始短轴长度
+boolean expanding = true; // 是否正在扩展椭圆
+
+void setup() {
+  size(2224/2, 1668/2); // 根据实际图像大小填写信息
+  img = loadImage("1.jpeg");
+  img.resize(width, height);
+  calculateMinorAxis(); // 计算初始短轴长度
+  
+  frameRate(speed);
+}
+
+void draw() {
+  background(0);
+
+  float tilesX = width / r;
+  float tilesY = tilesX;
+  float tileW = width / tilesX;
+  float tileH = height / tilesY;
+
+  noStroke();
+  ellipseMode(CORNER);
+
+  for (float x = 0; x < tilesX; x = x + p) {
+    for (float y = 0; y < tilesY; y = y + p) {
+      int pX = int(x * tileW);
+      int pY = int(y * tileH);
+
+      color c = img.get(pX, pY);
+      float b = brightness(c);
+      float s = map(b, 0, 255, 0, 1);
+
+      // 绘制实心椭圆
+      fill(255);
+      ellipseMode(CENTER);
+      ellipse(pX + tileW / 2, pY + tileH / 2, majorAxis * s, minorAxis * s);
+    }
+  }
+
+  // 如果椭圆在扩展状态
+  if (expanding) {
+    // 改变椭圆的长轴和短轴以实现变化
+    majorAxis += 2;
+    calculateMinorAxis();
+
+    // 如果椭圆的长轴超过一定阈值，停止扩展
+    if (majorAxis > r*2.5) {
+      majorAxis = r*2.5; // 将长轴设置为最大值
+      expanding = false; // 停止扩展
+    }
+  }
+}
+
+void calculateMinorAxis() {
+  minorAxis = sqrt(sq(majorAxis) * (1 - sq(eccentricity))); // 计算短轴长度
+}
+
+void keyPressed() {
+  if (key == ' ') {
+    // 重新设置椭圆状态
+    majorAxis = 5;
+    expanding = true;
+  }
+}
