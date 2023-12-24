@@ -1,0 +1,123 @@
+Star[] stars;
+int numStars = 50;
+float attractForce = 0.3;
+
+void setup() {
+  size(800, 600);
+  restartSimulation();
+}
+
+void draw() {
+  background(0, 5);
+
+  for (Star star : stars) {
+    star.update();
+    star.checkEdges();
+    star.display();
+  }
+
+  applyAttraction();
+}
+
+void keyPressed() {
+  if (key == ' ') {
+    restartSimulation();
+  }
+}
+
+void restartSimulation() {
+  stars = new Star[numStars];
+  for (int i = 0; i < numStars; i++) {
+    float x = random(width);
+    float y = random(height);
+    float angle = random(TWO_PI);
+    float speed = random(1, 1.5);
+    float radius = random(2, 5);
+    stars[i] = new Star(x, y, angle, speed, radius);
+  }
+}
+
+void applyAttraction() {
+  for (Star star1 : stars) {
+    for (Star star2 : stars) {
+      if (star1 != star2) {
+        PVector force = star1.calculateAttraction(star2);
+        star1.applyForce(force);
+      }
+    }
+  }
+}
+
+class Star {
+  PVector location;
+  PVector velocity;
+  PVector acceleration;
+  float angle;
+  float speed;
+  float radius;
+
+  Star(float x, float y, float angle, float speed, float radius) {
+    location = new PVector(x, y);
+    velocity = PVector.fromAngle(angle).mult(speed);
+    acceleration = new PVector(0, 0);
+    this.angle = angle;
+    this.speed = speed;
+    this.radius = radius;
+  }
+
+  void applyForce(PVector force) {
+    acceleration.add(force);
+  }
+
+  PVector calculateAttraction(Star other) {
+    PVector force = PVector.sub(other.location, location);
+    float distance = force.mag();
+    distance = constrain(distance, 5.0, 25.0);
+
+    float strength = (attractForce * speed * other.speed * (other.radius + 1)) / (distance * distance);
+    force.normalize();
+    force.mult(strength);
+    return force;
+  }
+
+  void update() {
+    velocity.add(acceleration);
+    location.add(velocity);
+    acceleration.mult(0);
+  }
+
+  void display() {
+    fill(255, 255, 200, 80);
+    noStroke();
+    drawStar(location.x, location.y, radius, radius * 2, 5);
+  }
+
+  void checkEdges() {
+    if (location.x > width) {
+      location.x = 0;
+    } else if (location.x < 0) {
+      location.x = width;
+    }
+
+    if (location.y > height) {
+      location.y = 0;
+    } else if (location.y < 0) {
+      location.y = height;
+    }
+  }
+
+  void drawStar(float x, float y, float radius1, float radius2, int npoints) {
+    float angle = TWO_PI / npoints;
+    float halfAngle = angle / 2.0;
+    beginShape();
+    for (float a = 0; a < TWO_PI; a += angle) {
+      float sx = x + cos(a) * radius2;
+      float sy = y + sin(a) * radius2;
+      vertex(sx, sy);
+      sx = x + cos(a + halfAngle) * radius1;
+      sy = y + sin(a + halfAngle) * radius1;
+      vertex(sx, sy);
+    }
+    endShape(CLOSE);
+  }
+}
