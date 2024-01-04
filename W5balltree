@@ -1,0 +1,51 @@
+int amount = 100;
+int[] x = new int[amount];
+int[] y = new int[amount];
+int[] z = new int[amount];
+
+int length = 250;
+int space = 500;
+int ballsize = 8;
+
+void setup(){
+  size(1000,900,P3D);
+  
+  background(0);
+  noFill();
+  stroke(255);
+  strokeWeight(2);
+  
+  //frameRate(30);
+  
+  for(int a=0;a<amount;a++){
+    x[a]=int(random(-length,length));
+    y[a]=int(random(-length,length));
+    z[a]=int(random(-length,length));
+  }
+  
+  smooth();
+}
+
+void draw(){
+  background(0);
+  translate(width/2,height/2);
+  
+  rotateY(frameCount/100.0);
+
+  float px = map(mouseX,0,width,length,-length);
+  float py = map(mouseY,0,height,-length,length);
+
+
+  for(int i=0;i<amount;i++){
+
+    float dis = dist(px,py,0,x[i],y[i],z[i]);
+    float d = map(dis,0,600,0,1);
+    
+    line (px,py,0,x[i],y[i],z[i]);
+    translate(x[i],y[i],z[i]);
+    sphere(ballsize*d);
+    translate(-x[i],-y[i],-z[i]);
+  }
+  
+
+}
