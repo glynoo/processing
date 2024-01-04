@@ -1,0 +1,54 @@
+void setup() {
+      size(800, 800);
+    }
+
+    void draw() {
+      background(#B9DCE8);
+      translate(width/2, height/2);
+      onefour(200, 0);
+    }
+
+    void onefour(float r, int num) {
+      if (r > 10) {
+        if (r > 30) {
+          noFill();
+          stroke(#538A9D);
+        } else {
+          fill(#E3EEF2);
+        }
+        float ratio = map(mouseX,0,width,0.2,0.5);
+
+        r = r * ratio;
+        num ++;
+        strokeWeight(3);
+
+        rectMode(CENTER);
+        rect(0, 0, r * 2, r * 2);
+
+        pushMatrix();
+        rotate(millis()/1000.0 * num);
+        translate(-r, -r);
+        onefour(r, num);
+        popMatrix();
+
+        pushMatrix();
+        rotate(millis()/1000.0 * num);
+        translate(-r, r);
+        onefour(r, num);
+        popMatrix();
+
+        pushMatrix();
+        rotate(millis()/1000.0 * num);
+        translate(r, -r);
+        onefour(r, num);
+        popMatrix();
+
+        pushMatrix();
+        rotate(millis()/1000.0 * num);
+        translate(r, r);
+        onefour(r, num);
+        popMatrix();
+      }
+    }
+    
+    
